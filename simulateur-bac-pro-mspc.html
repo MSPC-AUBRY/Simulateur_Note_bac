@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulateur Bac Pro MSPC - Formation initiale</title>
+
+<style>
+:root{
+    --blue:#155eef;
+    --blue-dark:#0b3da8;
+    --green:#16803c;
+    --red:#c62828;
+    --orange:#e67700;
+    --purple:#6941c6;
+    --bg:#f4f7fb;
+    --card:#fff;
+    --text:#172033;
+    --muted:#667085;
+    --border:#d9e0ea;
+}
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+}
+
+header{
+    background:linear-gradient(135deg,#0b3da8,#155eef);
+    color:white;
+    padding:30px 20px;
+}
+
+.container{
+    max-width:1150px;
+    margin:auto;
+}
+
+header h1{
+    margin:0 0 8px;
+    font-size:30px;
+}
+
+header p{
+    margin:0;
+    opacity:.92;
+}
+
+main{
+    max-width:1150px;
+    margin:auto;
+    padding:25px 15px 60px;
+}
+
+.notice{
+    background:#eaf2ff;
+    border-left:5px solid var(--blue);
+    padding:16px;
+    border-radius:8px;
+    margin-bottom:20px;
+    line-height:1.55;
+}
+
+.warning-box{
+    background:#fff8e8;
+    border-left:5px solid var(--orange);
+    padding:16px;
+    border-radius:8px;
+    margin-bottom:20px;
+    line-height:1.55;
+}
+
+.card{
+    background:var(--card);
+    border-radius:14px;
+    padding:20px;
+    margin-bottom:20px;
+    box-shadow:0 4px 18px rgba(20,40,80,.07);
+}
+
+h2{
+    margin-top:0;
+    font-size:21px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th,td{
+    padding:11px 9px;
+    border-bottom:1px solid var(--border);
+    text-align:left;
+    vertical-align:middle;
+}
+
+th{
+    background:#f8fafc;
+    font-size:14px;
+}
+
+.group{
+    background:#eef4ff;
+    color:var(--blue-dark);
+    font-weight:bold;
+}
+
+.prof{
+    background:#f4efff;
+    color:#5735a3;
+    font-weight:bold;
+}
+
+.general{
+    background:#f8fafc;
+    color:#475467;
+    font-weight:bold;
+}
+
+.code{
+    font-weight:bold;
+    white-space:nowrap;
+}
+
+.coef{
+    text-align:center;
+    font-weight:bold;
+    width:90px;
+}
+
+.note{
+    width:150px;
+}
+
+input[type="number"]{
+    width:100%;
+    max-width:120px;
+    padding:9px;
+    border:1px solid var(--border);
+    border-radius:7px;
+    font-size:16px;
+}
+
+input[type="number"]:focus{
+    outline:2px solid #bcd1ff;
+    border-color:var(--blue);
+}
+
+.results{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+}
+
+.result-box{
+    border-radius:12px;
+    padding:18px;
+    background:#f8fafc;
+    border:1px solid var(--border);
+    text-align:center;
+}
+
+.prof-result{
+    background:#f6f1ff;
+    border-color:#ddd0ff;
+}
+
+.result-box .label{
+    color:var(--muted);
+    font-size:14px;
+    margin-bottom:8px;
+}
+
+.result-box .value{
+    font-size:27px;
+    font-weight:bold;
+}
+
+.status{
+    margin-top:18px;
+    padding:18px;
+    border-radius:10px;
+    text-align:center;
+    font-weight:bold;
+    font-size:18px;
+}
+
+.good{
+    background:#e9f8ef;
+    color:var(--green);
+}
+
+.bad{
+    background:#fff0f0;
+    color:var(--red);
+}
+
+.warning{
+    background:#fff5e6;
+    color:var(--orange);
+}
+
+.info{
+    background:#eef4ff;
+    color:var(--blue-dark);
+}
+
+.progress{
+    height:13px;
+    background:#e6eaf0;
+    border-radius:20px;
+    overflow:hidden;
+    margin-top:15px;
+}
+
+.progress-bar{
+    height:100%;
+    width:0;
+    background:var(--blue);
+    transition:.3s;
+}
+
+.remaining{
+    margin-top:15px;
+    padding:16px;
+    background:#f8fafc;
+    border-radius:9px;
+    line-height:1.65;
+}
+
+.buttons{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:20px;
+}
+
+button{
+    border:0;
+    border-radius:8px;
+    padding:11px 18px;
+    cursor:pointer;
+    font-size:15px;
+    font-weight:bold;
+}
+
+.primary{
+    background:var(--blue);
+    color:white;
+}
+
+.secondary{
+    background:#e9eef5;
+    color:var(--text);
+}
+
+.small{
+    color:var(--muted);
+    font-size:13px;
+    line-height:1.5;
+}
+
+.pro-table{
+    margin-top:15px;
+}
+
+.pro-table td{
+    padding:9px;
+}
+
+footer{
+    text-align:center;
+    color:var(--muted);
+    font-size:12px;
+    padding:10px 20px 30px;
+}
+
+@media(max-width:800px){
+
+    .results{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+
+@media(max-width:600px){
+
+    header h1{
+        font-size:24px;
+    }
+
+    .results{
+        grid-template-columns:1fr;
+    }
+
+    table,
+    thead,
+    tbody,
+    th,
+    td,
+    tr{
+        display:block;
+    }
+
+    thead{
+        display:none;
+    }
+
+    tr{
+        margin-bottom:12px;
+        border:1px solid var(--border);
+        border-radius:8px;
+        padding:7px;
+    }
+
+    td{
+        border:0;
+        padding:6px;
+    }
+
+    .note{
+        width:auto;
+    }
+
+    input[type="number"]{
+        max-width:none;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="container">
+    <h1>🎓 Simulateur Bac Pro MSPC</h1>
+    <p>Maintenance des Systèmes de Production Connectés — Formation initiale</p>
+</div>
+</header>
+
+<main>
+
+<div class="notice">
+    <strong>Simulateur pour les élèves en formation initiale :</strong>
+    renseigne les notes sur 20. Le calcul est automatique.
+    Les champs vides ne sont pas comptabilisés dans la moyenne provisoire.
+</div>
+
+<div class="warning-box">
+    <strong>⚠️ Accès à l'épreuve de contrôle :</strong><br>
+    Si la moyenne générale finale est comprise entre
+    <strong>8/20 et 9,99/20</strong>, le candidat doit également avoir
+    une <strong>moyenne d'au moins 10/20 aux épreuves professionnelles</strong>
+    pour pouvoir accéder à l'épreuve de contrôle.
+    <br><br>
+    Pour le MSPC, la moyenne professionnelle est calculée sur :
+    <strong>E2 + E31 + E32 + E33</strong>,
+    soit <strong>13 coefficients</strong>.
+</div>
+
+
+<!-- NOTES -->
+
+<div class="card">
+
+<h2>📚 Notes du candidat</h2>
+
+<table>
+
+<thead>
+<tr>
+    <th>Épreuve</th>
+    <th>Intitulé</th>
+    <th>Coefficient</th>
+    <th>Note /20</th>
+</tr>
+</thead>
+
+<tbody>
+
+<!-- E1 -->
+
+<tr>
+<td colspan="4" class="group">
+E1 — ÉPREUVE SCIENTIFIQUE ET TECHNIQUE — Coef. 3
+</td>
+</tr>
+
+<tr>
+<td class="code">E11</td>
+<td>Mathématiques</td>
+<td class="coef">1,5</td>
+<td class="note">
+<input type="number"
+class="note-input"
+data-code="E11"
+data-coef="1.5"
+data-prof="false"
+min="0"
+max="20"
+step="0.01">
+</td>
+</tr>
+
+<tr>
+<td class="code">E12</td>
+<td>Physique-chimie</td>
+<td class="coef">1,5</td>
+<td class="note">
+<input type="number"
+class="note-input"
+data-code="E12"
+data-coef="1.5"
+data-prof="false"
+min="0"
+max="20"
+step="0.01">
+</td>
+</tr>
+
+
+<!-- E2 -->
+
+<tr>
+<td colspan="4" class="prof">
+E2 — PRÉPARATION D'UNE INTERVENTION DE MAINTENANCE — Coef. 3
+</td>
+</tr>
+
+<tr>
+<td class="code">E2.a</td>
+<td>Analyse et exploitation des données techniques</td>
+<td class="coef">1,5</td>
+<td class="note">
+<input type="number"
+class="note-input"
+data-code="E2a"
+data-coef="1.5"
+data-prof="true"
+min="0"
+max="20"
+step="0.01">
+</td>
+</tr>
+
+<tr>
+<td class="code">E2.b</td>
+<td>Préparation d'une intervention de maintenance</td>
+<td class="coef">1,5</td>
+<td class="note">
+<input type="number"
+class="note-input"
+data-code="E2b"
+data-coef="1.5"
+data-prof="true"
+min="0"
+max="20"
+step="0.01">
+</td>
+</tr>
+
+
+<!-- E3 -->
+
+<tr>
+<td colspan="4" class="prof">
+E3 — ÉPREUVE PROFESSIONNELLE
+</td>
+</tr>
+
+<tr>
+<td class="code">E31</td>
+<td>Maintenance préventive d'un système</td>
+<td class="coef">3</td>
+<td class="note">
+<input type="number"
+class="note-input"
+data-code="E31"
+data-coef="3"
+data-prof="true"
+min="0"
+max="20"
+step="0.01">
+</td>
+</tr>
+
+<tr>
+<td class="code">E32</td>
+<td>Maintenance corrective d'un système pluritechnologique</td>
+<td class="coef">3</td>
+<td class="note">
+<input type="number"
+class="note-input"
+data-code="E32"
+data-coef="3"
+data-prof="true"
+min="0"
+max="20"
+step="0.01">
+</td>
+</tr>
+
+<tr>
+<td class="code">E33</td>
+<td>
+Participation à un projet d'amélioration continue
+sur un système pluritechnologique et son environnement
+</td>
+<td class="coef">4</td>
+<td class="note">
+<input type="number"
+class="note-input"
+data-code="E33"
+data-coef="4"
+data-prof="true"
+min="0"
+max="20"
+step="0.01">
+</td>
+</tr>
+
+<tr>
+<td class="code">E34</td>
+<td>Économie-gestion</td>
+<td class="coef">1</td>
+<td class="note">
+<input type="number"
+class="note-input"
+data-code="E34"
+data-coef="1"
+data-prof="false"
+min="0"
+max="20"
+step="0.01">
+</td>
+</tr>
+
+<tr>
+<td class="code">E35</td>
+<td>Prévention-santé-environnement</td>
+<td class="coef">1</td>
+<td class="note">
+<input type="number"
+class="note-input"
+data-code="E35"
+data-coef="1"
+data-prof="false"
+min="0"
+max="20"
+step="0.01">
+</td>
+</tr>
+
+
+<!-- E4 -->
+
+<tr>
+<td colspan="4" class="general">
+E4 — LANGUE VIVANTE — Coef. 2
+</td>
+</tr>
+
+<tr>
+<td class="code">E4</td>
+<td>Langue vivante</td>
+<td class="coef">2</td>
+<td class="note">
+<input type="number"
+class="note-input"
+data-code="E4"
+data-coef="2"
+data-prof="false"
+min="0"
+max="20"
+step="0.01">
+</td>
+</tr>
+
+
+<!-- E5 -->
+
+<tr>
+<td colspan="4" class="general">
+E5 — FRANÇAIS, HISTOIRE-GÉOGRAPHIE ET EMC — Coef. 5
+</td>
+</tr>
+
+<tr>
+<td class="code">E51</td>
+<td>Français</td>
+<td class="coef">2,5</td>
+<td class="note">
+<input type="number"
+class="note-input"
+data-code="E51"
+data-coef="2.5"
+data-prof="false"
+min="0"
+max="20"
+step="0.01">
+</td>
+</tr>
+
+<tr>
+<td class="code">E52</td>
+<td>Histoire-géographie et enseignement moral et civique</td>
+<td class="coef">2,5</td>
+<td class="note">
+<input type="number"
+class="note-input"
+data-code="E52"
+data-coef="2.5"
+data-prof="false"
+min="0"
+max="20"
+step="0.01">
+</td>
+</tr>
+
+
+<!-- E6 -->
+
+<tr>
+<td colspan="4" class="general">
+E6 — ARTS APPLIQUÉS ET CULTURES ARTISTIQUES — Coef. 1
+</td>
+</tr>
+
+<tr>
+<td class="code">E6</td>
+<td>Arts appliqués et cultures artistiques</td>
+<td class="coef">1</td>
+<td class="note">
+<input type="number"
+class="note-input"
+data-code="E6"
+data-coef="1"
+data-prof="false"
+min="0"
+max="20"
+step="0.01">
+</td>
+</tr>
+
+
+<!-- E7 -->
+
+<tr>
+<td colspan="4" class="general">
+E7 — ÉDUCATION PHYSIQUE ET SPORTIVE — Coef. 1
+</td>
+</tr>
+
+<tr>
+<td class="code">E7</td>
+<td>Éducation physique et sportive</td>
+<td class="coef">1</td>
+<td class="note">
+<input type="number"
+class="note-input"
+data-code="E7"
+data-coef="1"
+data-prof="false"
+min="0"
+max="20"
+step="0.01">
+</td>
+</tr>
+
+</tbody>
+</table>
+
+
+<div class="buttons">
+
+<button class="primary" onclick="remplirExemple()">
+🎯 Exemple
+</button>
+
+<button class="secondary" onclick="effacer()">
+🗑️ Effacer
+</button>
+
+</div>
+
+</div>
+
+
+<!-- RESULTATS -->
+
+<div class="card">
+
+<h2>📊 Résultats</h2>
+
+<div class="results">
+
+<div class="result-box">
+<div class="label">Moyenne générale</div>
+<div class="value" id="moyenne">—</div>
+</div>
+
+<div class="result-box">
+<div class="label">Points obtenus</div>
+<div class="value" id="points">0</div>
+</div>
+
+<div class="result-box prof-result">
+<div class="label">Moyenne professionnelle</div>
+<div class="value" id="moyennePro">—</div>
+</div>
+
+<div class="result-box">
+<div class="label">Coefficients renseignés</div>
+<div class="value" id="coeffs">0 / 27</div>
+</div>
+
+</div>
+
+
+<div class="progress">
+<div class="progress-bar" id="progress"></div>
+</div>
+
+
+<div id="statut" class="status warning">
+Renseigne les notes du candidat.
+</div>
+
+
+<div id="rattrapage" class="status info">
+Conditions d'accès à l'épreuve de contrôle : en attente des notes.
+</div>
+
+
+<div id="reste" class="remaining">
+<strong>Objectif 10/20 :</strong><br>
+Renseigne les notes pour connaître la moyenne nécessaire
+dans les épreuves restantes.
+</div>
+
+</div>
+
+
+<!-- EXPLICATION RATTRAPAGE -->
+
+<div class="card">
+
+<h2>🎯 Épreuve de contrôle</h2>
+
+<table class="pro-table">
+
+<tr>
+<td><strong>Moyenne générale</strong></td>
+<td>
+Elle doit être comprise entre
+<strong>8/20 et 9,99/20</strong>.
+</td>
+</tr>
+
+<tr>
+<td><strong>Moyenne professionnelle</strong></td>
+<td>
+Elle doit être au minimum de
+<strong>10/20</strong>.
+</td>
+</tr>
+
+<tr>
+<td><strong>Épreuves professionnelles</strong></td>
+<td>
+E2 + E31 + E32 + E33 =
+<strong>13 coefficients</strong>.
+</td>
+</tr>
+
+</table>
+
+<p class="small">
+Le simulateur affiche séparément la moyenne générale et la moyenne
+professionnelle afin de ne pas confondre les deux conditions.
+</p>
+
+</div>
+
+
+<!-- FORMULE -->
+
+<div class="card">
+
+<h2>🧮 Calcul</h2>
+
+<p>
+<strong>Moyenne générale :</strong>
+points obtenus ÷ coefficients renseignés.
+</p>
+
+<p>
+<strong>Moyenne professionnelle :</strong>
+points des épreuves professionnelles ÷ coefficients professionnels renseignés.
+</p>
+
+<p class="small">
+Le total des coefficients est de 27.
+La moyenne professionnelle utilisée pour la condition d'accès à
+l'épreuve de contrôle est calculée sur 13 coefficients :
+E2 (3) + E31 (3) + E32 (3) + E33 (4).
+</p>
+
+</div>
+
+</main>
+
+
+<footer>
+Simulateur pédagogique — Bac Pro MSPC — Formation initiale
+</footer>
+
+
+<script>
+
+const inputs = document.querySelectorAll(".note-input");
+
+const TOTAL_COEF = 27;
+const TOTAL_COEF_PRO = 13;
+
+
+inputs.forEach(input => {
+    input.addEventListener("input", calculer);
+});
+
+
+function getData(){
+
+    let points = 0;
+    let coeffs = 0;
+
+    let pointsPro = 0;
+    let coeffsPro = 0;
+
+    inputs.forEach(input => {
+
+        if(input.value.trim() === ""){
+            return;
+        }
+
+        let note = parseFloat(input.value);
+
+        if(isNaN(note)){
+            return;
+        }
+
+        note = Math.max(0, Math.min(20, note));
+
+        const coef = parseFloat(input.dataset.coef);
+        const professionnel = input.dataset.prof === "true";
+
+        points += note * coef;
+        coeffs += coef;
+
+        if(professionnel){
+
+            pointsPro += note * coef;
+            coeffsPro += coef;
+
+        }
+
+    });
+
+    return {
+        points,
+        coeffs,
+        pointsPro,
+        coeffsPro
+    };
+}
+
+
+function calculer(){
+
+    const data = getData();
+
+    const moyenne =
+        data.coeffs > 0
+        ? data.points / data.coeffs
+        : null;
+
+    const moyennePro =
+        data.coeffsPro > 0
+        ? data.pointsPro / data.coeffsPro
+        : null;
+
+
+    document.getElementById("points").textContent =
+        data.points.toFixed(2);
+
+
+    document.getElementById("coeffs").textContent =
+        formatNumber(data.coeffs) + " / 27";
+
+
+    document.getElementById("moyenne").textContent =
+        moyenne !== null
+        ? moyenne.toFixed(2) + " /20"
+        : "—";
+
+
+    document.getElementById("moyennePro").textContent =
+        moyennePro !== null
+        ? moyennePro.toFixed(2) + " /20"
+        : "—";
+
+
+    const progression =
+        (data.coeffs / TOTAL_COEF) * 100;
+
+    document.getElementById("progress").style.width =
+        progression + "%";
+
+
+    afficherStatut(moyenne);
+
+    afficherRattrapage(
+        moyenne,
+        moyennePro,
+        data
+    );
+
+    afficherObjectif(data);
+}
+
+
+function afficherStatut(moyenne){
+
+    const element =
+        document.getElementById("statut");
+
+    element.className = "status";
+
+
+    if(moyenne === null){
+
+        element.classList.add("warning");
+
+        element.textContent =
+            "Renseigne les notes du candidat.";
+
+    }
+
+    else if(moyenne >= 10){
+
+        element.classList.add("good");
+
+        element.textContent =
+            "🎉 Moyenne générale ≥ 10/20.";
+
+    }
+
+    else if(moyenne >= 8){
+
+        element.classList.add("warning");
+
+        element.textContent =
+            "⚠️ Moyenne générale entre 8 et 9,99/20.";
+
+    }
+
+    else{
+
+        element.classList.add("bad");
+
+        element.textContent =
+            "❌ Moyenne générale inférieure à 8/20.";
+    }
+}
+
+
+function afficherRattrapage(
+    moyenne,
+    moyennePro,
+    data
+){
+
+    const element =
+        document.getElementById("rattrapage");
+
+
+    element.className = "status info";
+
+
+    if(data.coeffsPro < TOTAL_COEF_PRO){
+
+        if(
+            moyenne !== null &&
+            moyenne >= 8 &&
+            moyenne < 10 &&
+            moyennePro !== null &&
+            moyennePro < 10
+        ){
+
+            element.className = "status bad";
+
+            element.textContent =
+                "🔴 Attention : la moyenne professionnelle est actuellement inférieure à 10/20. Il faudra atteindre au moins 10/20 professionnel pour accéder à l'épreuve de contrôle.";
+
+        }
+
+        else if(
+            moyenne !== null &&
+            moyenne >= 8 &&
+            moyenne < 10 &&
+            moyennePro !== null &&
+            moyennePro >= 10
+        ){
+
+            element.className = "status good";
+
+            element.textContent =
+                "🟢 Les moyennes actuelles remplissent les deux conditions, sous réserve des notes restantes.";
+
+        }
+
+        else{
+
+            element.className = "status info";
+
+            element.textContent =
+                "ℹ️ Les conditions de l'épreuve de contrôle seront vérifiées lorsque toutes les notes nécessaires seront renseignées.";
+        }
+
+        return;
+    }
+
+
+    /*
+     * Toutes les notes professionnelles sont renseignées.
+     * On peut donc contrôler précisément la condition professionnelle.
+     */
+
+
+    if(moyenne === null){
+
+        element.className = "status info";
+
+        element.textContent =
+            "Conditions de rattrapage : en attente de la moyenne générale.";
+
+        return;
+    }
+
+
+    if(moyenne >= 10){
+
+        element.className = "status good";
+
+        element.textContent =
+            "✅ Moyenne générale ≥ 10/20 : le candidat atteint la moyenne requise.";
+
+        return;
+    }
+
+
+    if(moyenne >= 8 && moyenne < 10){
+
+        if(moyennePro >= 10){
+
+            element.className = "status good";
+
+            element.textContent =
+                "🟢 Épreuve de contrôle accessible : moyenne générale entre 8 et 9,99/20 et moyenne professionnelle ≥ 10/20.";
+
+        }
+        else{
+
+            element.className = "status bad";
+
+            element.textContent =
+                "🔴 Pas d'accès à l'épreuve de contrôle : moyenne professionnelle inférieure à 10/20.";
+        }
+
+        return;
+    }
+
+
+    element.className = "status bad";
+
+    element.textContent =
+        "🔴 Pas d'accès à l'épreuve de contrôle : moyenne générale inférieure à 8/20.";
+}
+
+
+function afficherObjectif(data){
+
+    const zone =
+        document.getElementById("reste");
+
+
+    const coeffRestants =
+        TOTAL_COEF - data.coeffs;
+
+
+    if(data.coeffs === 0){
+
+        zone.innerHTML =
+            "<strong>Objectif 10/20 :</strong><br>" +
+            "Renseigne les premières notes.";
+
+        return;
+    }
+
+
+    if(coeffRestants <= 0){
+
+        zone.innerHTML =
+            "<strong>Résultat final :</strong><br>" +
+            "Toutes les notes sont renseignées.";
+
+        return;
+    }
+
+
+    /*
+     * Calcul de la moyenne nécessaire
+     * pour terminer avec 10/20.
+     */
+
+    const pointsNecessaires =
+        (10 * TOTAL_COEF) - data.points;
+
+
+    const moyenneNecessaire =
+        pointsNecessaires / coeffRestants;
+
+
+    if(moyenneNecessaire <= 0){
+
+        zone.innerHTML =
+            "🎉 <strong>10/20 est déjà assuré mathématiquement.</strong><br>" +
+            "Même avec 0/20 dans les coefficients restants, " +
+            "la moyenne finale resterait au moins à 10/20.";
+
+    }
+
+    else if(moyenneNecessaire > 20){
+
+        zone.innerHTML =
+            "🔴 <strong>10/20 n'est plus atteignable mathématiquement</strong> " +
+            "avec les coefficients restants.<br>" +
+            "Moyenne nécessaire : <strong>" +
+            moyenneNecessaire.toFixed(2) +
+            "/20</strong>.";
+
+    }
+
+    else{
+
+        zone.innerHTML =
+            "🎯 <strong>Pour atteindre 10/20 :</strong><br>" +
+            "il faut obtenir environ <strong>" +
+            moyenneNecessaire.toFixed(2) +
+            "/20</strong> de moyenne sur les coefficients restants.<br>" +
+            "<span class='small'>" +
+            formatNumber(coeffRestants) +
+            " coefficient(s) restent à renseigner.</span>";
+    }
+}
+
+
+function remplirExemple(){
+
+    const exemple = {
+
+        E11:11,
+        E12:12,
+
+        E2a:13,
+        E2b:12,
+
+        E31:14,
+        E32:11,
+        E33:13,
+
+        E34:10,
+        E35:12,
+
+        E4:13,
+
+        E51:12,
+        E52:11,
+
+        E6:15,
+        E7:16
+    };
+
+
+    inputs.forEach(input => {
+
+        const code =
+            input.dataset.code;
+
+        if(exemple[code] !== undefined){
+
+            input.value =
+                exemple[code];
+        }
+
+    });
+
+
+    calculer();
+}
+
+
+function effacer(){
+
+    inputs.forEach(input => {
+
+        input.value = "";
+
+    });
+
+    calculer();
+}
+
+
+function formatNumber(number){
+
+    return Number.isInteger(number)
+        ? number.toString()
+        : number.toFixed(1);
+}
+
+
+calculer();
+
+</script>
+
+</body>
+</html>
